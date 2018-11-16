@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
-
+import Chat from '../src/pages/Chat'
+import Login from '../src/pages/Login'
+import auth from 'firebase/auth'
+import channels  from '../src/otherthings/channels'
+import users from '../src/otherthings/users'
 Vue.use(Router)
 
 export default new Router({
@@ -10,8 +13,32 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      name: 'chat',
+      component: Chat,
+      beforeEnter:(to, from, next) => {
+        if( !firebase.auth().currentUser){
+          next('/login')
+        } else {
+          next()
+        }
+      },
+      children: [
+        {
+          path: 'channels',
+          name: 'channel',
+          component: channels
+        },
+        {
+          path: 'users',
+          name: 'user',
+          component: users
+        },
+      ]
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
     },
     {
       path: '/about',
